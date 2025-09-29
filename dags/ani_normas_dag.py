@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from airflow import DAG
 from airflow.models.param import Param
 from airflow.utils.dates import days_ago
