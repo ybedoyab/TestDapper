@@ -1,0 +1,42 @@
+title:
+  type: string
+  required: true
+  regex: "^.{1,65}$"
+
+external_link:
+  type: url
+  required: true
+
+created_at:
+  type: date
+  required: true
+
+entity:
+  type: string
+  required: true
+
+summary:
+  type: string
+  required: false
+
+rtype_id:
+  type: integer
+  required: false
+
+classification_id:
+  type: integer
+  required: false
+
+gtype:
+  type: string
+  required: false
+
+is_active:
+  type: boolean
+  required: false
+
+update_at:
+  type: date
+  required: false
+
+
