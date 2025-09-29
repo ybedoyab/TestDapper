@@ -1,5 +1,6 @@
 import os
-from typing import Tuple, List
+from typing import Tuple, List, Dict
+from urllib.parse import urlparse
 
 import pandas as pd
 import psycopg2
@@ -12,24 +13,47 @@ class DatabaseManager:
 
     def connect(self) -> bool:
         try:
-            dbname = os.environ.get('DB_NAME', 'airflow')
-            user = os.environ.get('DB_USER', 'airflow')
-            password = os.environ.get('DB_PASSWORD', 'airflow')
-            host = os.environ.get('DB_HOST', 'postgres')
-            port = int(os.environ.get('DB_PORT', '5432'))
+            params = self._get_db_params_from_env()
 
             self.connection = psycopg2.connect(
-                dbname=dbname,
-                user=user,
-                password=password,
-                host=host,
-                port=port,
+                dbname=params['dbname'],
+                user=params['user'],
+                password=params['password'],
+                host=params['host'],
+                port=params['port'],
             )
             self.cursor = self.connection.cursor()
             return True
         except Exception as e:
             print(f"Database connection error: {e}")
             return False
+
+    def _get_db_params_from_env(self) -> Dict[str, str]:
+        uri = os.environ.get('AIRFLOW__CORE__SQL_ALCHEMY_CONN')
+        if uri:
+            # Expected form: postgresql+psycopg2://user:pass@host:port/dbname
+            parsed = urlparse(uri)
+            dbname = parsed.path.lstrip('/') or 'airflow'
+            user = parsed.username or 'airflow'
+            password = parsed.password or 'airflow'
+            host = parsed.hostname or 'postgres'
+            port = parsed.port or 5432
+            return {
+                'dbname': dbname,
+                'user': user,
+                'password': password,
+                'host': host,
+                'port': int(port),
+            }
+
+        # Fallback to DB_* environment variables
+        return {
+            'dbname': os.environ.get('DB_NAME', 'airflow'),
+            'user': os.environ.get('DB_USER', 'airflow'),
+            'password': os.environ.get('DB_PASSWORD', 'airflow'),
+            'host': os.environ.get('DB_HOST', 'postgres'),
+            'port': int(os.environ.get('DB_PORT', '5432')),
+        }
 
     def close(self) -> None:
         if self.cursor:
