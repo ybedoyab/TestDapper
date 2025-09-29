@@ -111,23 +111,20 @@ update_at:
      - `start_date` razonable (p. ej., `days_ago(1)`).
    - Variables/params:
      - `num_pages_to_scrape` como Param o Variable de Airflow con default (p. ej., 3 o 9).
+   - Nota: no se implementa pre-chequeo de “contenido nuevo” en el DAG; se ejecuta siempre la extracción y se confía en la idempotencia durante la escritura.
 
- - Paso 10 — fix: alinear verificación de “nuevo contenido” a tabla correcta o deshabilitarla en DAG
-   - Ajustar la consulta errónea (`dapper_regulations_regulations`) para usar `regulations`, o retirar el pre-check.
-   - Recomendación inicial: omitir pre-check en DAG y confiar en idempotencia (simplifica y evita dependencia de esquema).
-
- - Paso 11 — feat: logs métricas por etapa (extraídos, descartados por validación, insertados)
+ - Paso 10 — feat: logs métricas por etapa (extraídos, descartados por validación, insertados)
    - `extract_task`: loggear páginas procesadas y `len(df_extraido)`.
    - `validate_task`: loggear `metrics` (por campo y total de filas descartadas) y `len(df_validado)`.
    - `write_task`: loggear filas insertadas en `regulations` y `regulations_component`, y mensaje de resumen.
 
- - Paso 12 — docs: agregar README con pasos para levantar entorno y ejecutar el DAG
+ - Paso 11 — docs: agregar README con pasos para levantar entorno y ejecutar el DAG
    - Índice breve: requisitos, levantar entorno, credenciales, ejecución del DAG, troubleshooting.
    - Comandos principales (vía Makefile): `make start`, abrir UI en `http://localhost:8080` (admin/admin).
    - Mencionar dónde editar `configs/validation_rules.yaml` y cómo cambiar `num_pages_to_scrape`.
    - Indicar que el destino de escritura es la BD Postgres del compose.
 
- - Paso 13 — chore: agregar configs/schema.sql (DDL exportado/alternativo a creación en código)
+ - Paso 12 — chore: agregar configs/schema.sql (DDL exportado/alternativo a creación en código)
    - Incluir DDL equivalente al creado por `create_tables_if_not_exists` para referencia:
 ```sql
 CREATE TABLE IF NOT EXISTS regulations (
@@ -151,12 +148,12 @@ CREATE TABLE IF NOT EXISTS regulations_component (
 );
 ```
 
- - Paso 14 — chore: limpiar dependencias no usadas (boto3), asegurar requirements en Dockerfile
+ - Paso 13 — chore: limpiar dependencias no usadas (boto3), asegurar requirements en Dockerfile
    - Eliminar `boto3` y `botocore` del código y de `requirements.txt` si existieran.
    - Verificar `requirements.txt`: `requests`, `beautifulsoup4`, `pandas`, `numpy==1.24.3`, `psycopg2-binary==2.9.10`.
    - Confirmar `Dockerfile` instala `requirements.txt` como usuario `airflow`.
 
- - Paso 15 — chore: pruebas manuales locales documentadas y checklist de criterios de evaluación
+ - Paso 14 — chore: pruebas manuales locales documentadas y checklist de criterios de evaluación
    - Pruebas sugeridas:
      - Correr `make start`, crear usuario admin (si no existe) y validar UI.
      - Ejecutar el DAG manualmente con `num_pages_to_scrape` bajo (p. ej., 2-3) y revisar logs.

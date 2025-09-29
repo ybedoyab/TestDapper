@@ -32,8 +32,11 @@ with DAG(
 ) as dag:
 
     def extract_callable(ti, num_pages_to_scrape: int, verbose: bool):
+        print("\n=== ETAPA: EXTRACCIÓN ===")
+        print(f"Parámetros → num_pages_to_scrape={num_pages_to_scrape}, verbose={verbose}")
         df = run_extraction(num_pages=num_pages_to_scrape, verbose=verbose)
         print(f"Total de registros extraídos: {len(df)}")
+        print("=== FIN EXTRACCIÓN ===\n")
         return df.to_dict(orient='records')
 
     extract_task = PythonOperator(
@@ -46,10 +49,20 @@ with DAG(
     )
 
     def validate_callable(ti):
+        print("\n=== ETAPA: VALIDACIÓN ===")
         records = ti.xcom_pull(task_ids='extract') or []
         df = pd.DataFrame(records)
         df_valid, metrics = run_validation(df)
-        print(f"Métricas de validación: {metrics}")
+        print("Resumen de validación →")
+        print(f"  - total_input_rows: {metrics.get('total_input_rows')}")
+        print(f"  - total_valid_rows: {metrics.get('total_valid_rows')}")
+        print(f"  - total_dropped_rows: {metrics.get('total_dropped_rows')}")
+        invalid_by_field = metrics.get('invalid_by_field', {})
+        if invalid_by_field:
+            print("  - invalid_by_field:")
+            for k, v in invalid_by_field.items():
+                print(f"    * {k}: {v}")
+        print("=== FIN VALIDACIÓN ===\n")
         return {
             'records': df_valid.to_dict(orient='records'),
             'metrics': metrics,
@@ -61,11 +74,14 @@ with DAG(
     )
 
     def write_callable(ti):
+        print("\n=== ETAPA: ESCRITURA ===")
         payload = ti.xcom_pull(task_ids='validate') or {}
         records = payload.get('records', [])
         df = pd.DataFrame(records)
         inserted, message = (0, 'No records to write') if df.empty else run_write(df, ENTITY_VALUE)
-        print(f"Escritura: inserted={inserted} | {message}")
+        print(f"Escritura → inserted={inserted}")
+        print(f"Mensaje: {message}")
+        print("=== FIN ESCRITURA ===\n")
         return {
             'inserted': inserted,
             'message': message,
