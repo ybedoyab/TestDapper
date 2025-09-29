@@ -1,0 +1,32 @@
+# OS / misc
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.python-version
+.venv/
+venv/
+
+# Env
+.env
+.env.*
+
+# Airflow
+airflow.cfg
+logs/
+plugins/__pycache__/
+dags/__pycache__/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Build / dist
+build/
+dist/
+*.egg-info/
+
+
