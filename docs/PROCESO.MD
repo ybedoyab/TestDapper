@@ -187,3 +187,5 @@ CREATE TABLE IF NOT EXISTS regulations_component (
  - Paso 22: feat: exportar informacion scrapeada a csv (opcional)
 
  - Paso 23: fix: carpeta de exports/ no estaba en docker
+
+ - Paso 24: fix: permisos para la carpeta exports/

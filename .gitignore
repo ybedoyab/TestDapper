@@ -19,6 +19,9 @@ logs/
 plugins/__pycache__/
 dags/__pycache__/
 
+# Exports
+exports/
+
 # Notebooks
 .ipynb_checkpoints/
 

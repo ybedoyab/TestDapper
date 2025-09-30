@@ -52,10 +52,10 @@ def export_regulations_to_csv(output_file=None, limit=None):
     
     if not output_file:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_file = f"exports/regulations_export_{timestamp}.csv"
+        output_file = f"/opt/airflow/exports/regulations_export_{timestamp}.csv"
     
     # Crear directorio exports si no existe
-    os.makedirs("exports", exist_ok=True)
+    os.makedirs("/opt/airflow/exports", exist_ok=True)
     
     conn = get_db_connection()
     if not conn:
@@ -126,9 +126,9 @@ def export_components_to_csv(output_file=None, limit=None):
     
     if not output_file:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_file = f"exports/components_export_{timestamp}.csv"
+        output_file = f"/opt/airflow/exports/components_export_{timestamp}.csv"
     
-    os.makedirs("exports", exist_ok=True)
+    os.makedirs("/opt/airflow/exports", exist_ok=True)
     
     conn = get_db_connection()
     if not conn:

@@ -90,6 +90,7 @@ view-components:
 export-csv:
 	@echo "=== EXPORTANDO DATOS A CSV ==="
 	@mkdir -p exports
+	@chmod 777 exports
 	@echo "Ejecutando script de exportación..."
 	docker-compose exec -T webserver python /opt/airflow/scripts/export_to_csv.py --components
 	@echo "Exportación completada! Revisa la carpeta exports/"
