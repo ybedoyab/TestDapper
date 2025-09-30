@@ -61,4 +61,5 @@ up-airflow:
 start: install-deps reset-airflow init-airflow up-airflow create-tables
 	@echo "Airflow started successfully!"
 	@echo "Access UI at: http://localhost:8080"
-	@echo "Login: $${AIRFLOW_ADMIN_USERNAME} / $${AIRFLOW_ADMIN_PASSWORD}"
+	@sed -i 's/\r$$//' .env 2>/dev/null || true
+	@export $$(cat .env | xargs) && echo "Login: $$AIRFLOW_ADMIN_USERNAME / $$AIRFLOW_ADMIN_PASSWORD"
