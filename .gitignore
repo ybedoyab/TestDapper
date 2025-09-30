@@ -13,7 +13,6 @@ venv/
 
 # Env
 .env
-.env.*
 
 # Airflow
 logs/

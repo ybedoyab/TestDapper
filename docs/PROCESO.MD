@@ -173,3 +173,5 @@ CREATE TABLE IF NOT EXISTS regulations_component (
 
  - Paso 16 - fix: cambio de nombre de configs a config para estandarizacion
    - Cambiar el nombre de la carpeta `configs/` a `config/`
+
+ - Paso 17: fix: variables de entorno centralizadas

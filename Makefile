@@ -13,9 +13,9 @@ init-airflow:
 	docker-compose run --rm webserver airflow db init
 	docker-compose run --rm webserver \
 	  airflow users create \
-	    --username admin --password admin \
-	    --firstname Admin --lastname User \
-	    --role Admin --email admin@example.com
+	    --username $${AIRFLOW_ADMIN_USERNAME} --password $${AIRFLOW_ADMIN_PASSWORD} \
+	    --firstname $${AIRFLOW_ADMIN_FIRSTNAME} --lastname $${AIRFLOW_ADMIN_LASTNAME} \
+	    --role $${AIRFLOW_ADMIN_ROLE} --email $${AIRFLOW_ADMIN_EMAIL}
 
 create-tables:
 	@echo "Creating database tables..."
@@ -26,6 +26,6 @@ up-airflow:
 	docker-compose up -d
 
 start: reset-airflow init-airflow up-airflow create-tables
-	@echo "✅ Airflow started successfully!"
-	@echo "🌐 Access UI at: http://localhost:8080"
-	@echo "👤 Login: admin / admin"
+	@echo "Airflow started successfully!"
+	@echo "Access UI at: http://localhost:8080"
+	@echo "Login: $${AIRFLOW_ADMIN_USERNAME} / $${AIRFLOW_ADMIN_PASSWORD}"
