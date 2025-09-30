@@ -183,3 +183,7 @@ CREATE TABLE IF NOT EXISTS regulations_component (
  - Paso 20: fix: pythonpath env error
 
  - Paso 21: feat: revisar los datos insertados y mejorado el debug
+
+ - Paso 22: feat: exportar informacion scrapeada a csv (opcional)
+
+ - Paso 23: fix: carpeta de exports/ no estaba en docker
