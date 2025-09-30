@@ -1,3 +1,4 @@
+# Módulo de escritura de datos a base de datos PostgreSQL con idempotencia
 import os
 from typing import Tuple, List, Dict
 from urllib.parse import urlparse

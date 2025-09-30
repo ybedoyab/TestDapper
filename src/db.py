@@ -1,3 +1,4 @@
+# Módulo de utilidades para conexión y gestión de base de datos
 from urllib.parse import urlparse
 from typing import Dict, Any
 

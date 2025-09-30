@@ -1,9 +1,4 @@
-#!/usr/bin/env python3
-"""
-Script para exportar datos de la base de datos a CSV
-Uso: python scripts/export_to_csv.py [--output OUTPUT_FILE] [--limit LIMIT]
-"""
-
+# Script para exportar datos de la base de datos a CSV
 import os
 import sys
 import argparse
@@ -15,9 +10,7 @@ import psycopg2
 
 
 def get_db_connection():
-    """Obtiene conexión a la base de datos usando variables de entorno de Airflow"""
     try:
-        # Intentar usar la conexión de Airflow
         uri = os.environ.get('AIRFLOW__CORE__SQL_ALCHEMY_CONN')
         if uri:
             parsed = urlparse(uri)
@@ -27,7 +20,6 @@ def get_db_connection():
             host = parsed.hostname or 'postgres'
             port = parsed.port or 5432
         else:
-            # Fallback a variables de entorno directas
             dbname = os.environ.get('POSTGRES_DB', 'airflow')
             user = os.environ.get('POSTGRES_USER', 'airflow')
             password = os.environ.get('POSTGRES_PASSWORD', 'airflow')
@@ -48,13 +40,10 @@ def get_db_connection():
 
 
 def export_regulations_to_csv(output_file=None, limit=None):
-    """Exporta regulaciones de la BD a CSV"""
-    
     if not output_file:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_file = f"/opt/airflow/exports/regulations_export_{timestamp}.csv"
     
-    # Crear directorio exports si no existe
     os.makedirs("/opt/airflow/exports", exist_ok=True)
     
     conn = get_db_connection()
@@ -62,7 +51,6 @@ def export_regulations_to_csv(output_file=None, limit=None):
         return False, "Error de conexión a la base de datos"
     
     try:
-        # Query principal con JOIN para obtener componentes
         query = """
         SELECT 
             r.id,
@@ -96,16 +84,13 @@ def export_regulations_to_csv(output_file=None, limit=None):
             print("No se encontraron datos para exportar")
             return True, "No hay datos para exportar"
         
-        # Limpiar y formatear datos
         df['created_at'] = pd.to_datetime(df['created_at']).dt.strftime('%Y-%m-%d %H:%M:%S')
         df['update_at'] = pd.to_datetime(df['update_at']).dt.strftime('%Y-%m-%d %H:%M:%S')
         df['summary'] = df['summary'].fillna('[Sin resumen]')
         df['external_link'] = df['external_link'].fillna('[Sin enlace]')
         
-        # Exportar a CSV
         df.to_csv(output_file, index=False, encoding='utf-8')
         
-        # Mostrar estadísticas
         print(f"=== EXPORTACIÓN COMPLETADA ===")
         print(f"Archivo generado: {output_file}")
         print(f"Total de registros exportados: {len(df)}")
@@ -122,8 +107,6 @@ def export_regulations_to_csv(output_file=None, limit=None):
 
 
 def export_components_to_csv(output_file=None, limit=None):
-    """Exporta componentes de regulaciones a CSV separado"""
-    
     if not output_file:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_file = f"/opt/airflow/exports/components_export_{timestamp}.csv"
@@ -185,13 +168,10 @@ def main():
     print()
     
     if args.only_components:
-        # Solo exportar componentes
         success, message = export_components_to_csv(args.output, args.limit)
     else:
-        # Exportar regulaciones principales
         success, message = export_regulations_to_csv(args.output, args.limit)
         
-        # Exportar componentes si se solicita
         if success and args.components:
             print()
             comp_success, comp_message = export_components_to_csv(limit=args.limit)

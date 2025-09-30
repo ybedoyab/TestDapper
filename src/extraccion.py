@@ -1,3 +1,4 @@
+# Módulo de extracción de datos web para normativas ANI
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -6,7 +7,6 @@ import re
 from typing import List, Dict, Any
 
 
-# Constantes de scraping (idénticas a lambda.py)
 ENTITY_VALUE = 'Agencia Nacional de Infraestructura'
 FIXED_CLASSIFICATION_ID = 13
 URL_BASE = "https://www.ani.gov.co/informacion-de-la-ani/normatividad?field_tipos_de_normas__tid=12&title=&body_value=&field_fecha__value%5Bvalue%5D%5Byear%5D="

@@ -1,3 +1,4 @@
+# Módulo de validación de datos con reglas configurables
 import re
 from datetime import datetime
 from typing import Any, Dict, Tuple

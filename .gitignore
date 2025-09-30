@@ -16,7 +16,6 @@ venv/
 
 # Airflow
 logs/
-plugins/__pycache__/
 dags/__pycache__/
 
 # Exports
