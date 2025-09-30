@@ -1,4 +1,4 @@
-.PHONY: reset-airflow init-airflow up-airflow down-airflow start create-tables install-deps load-env view-data view-regulations view-components db-connect
+.PHONY: reset-airflow init-airflow up-airflow down-airflow start create-tables install-deps load-env view-data view-regulations view-components db-connect export-csv
 
 load-env:
 	@echo "Loading environment variables..."
@@ -86,3 +86,10 @@ view-regulations:
 view-components:
 	@echo "=== COMPONENTES DE REGULACIONES ==="
 	docker-compose exec -T postgres psql -U airflow -d airflow -c "SELECT rc.id, r.title, r.entity, rc.components_id FROM regulations_component rc JOIN regulations r ON rc.regulations_id = r.id ORDER BY rc.id DESC LIMIT 10;"
+
+export-csv:
+	@echo "=== EXPORTANDO DATOS A CSV ==="
+	@mkdir -p exports
+	@echo "Ejecutando script de exportación..."
+	docker-compose exec -T webserver python /opt/airflow/scripts/export_to_csv.py --components
+	@echo "Exportación completada! Revisa la carpeta exports/"

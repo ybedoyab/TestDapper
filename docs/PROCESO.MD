@@ -181,3 +181,5 @@ CREATE TABLE IF NOT EXISTS regulations_component (
  - Paso 19: fix: error de dependencia y cli
 
  - Paso 20: fix: pythonpath env error
+
+ - Paso 21: feat: revisar los datos insertados y mejorado el debug
