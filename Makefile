@@ -1,4 +1,4 @@
-.PHONY: reset-airflow init-airflow up-airflow down-airflow start
+.PHONY: reset-airflow init-airflow up-airflow down-airflow start create-tables
 
 down-airflow:
 	docker-compose down --volumes
@@ -17,7 +17,15 @@ init-airflow:
 	    --firstname Admin --lastname User \
 	    --role Admin --email admin@example.com
 
+create-tables:
+	@echo "Creating database tables..."
+	docker-compose exec -T postgres psql -U airflow -d airflow < configs/schema.sql
+	@echo "Tables created successfully!"
+
 up-airflow:
 	docker-compose up -d
 
-start: reset-airflow init-airflow up-airflow
+start: reset-airflow init-airflow up-airflow create-tables
+	@echo "✅ Airflow started successfully!"
+	@echo "🌐 Access UI at: http://localhost:8080"
+	@echo "👤 Login: admin / admin"

@@ -17,21 +17,28 @@ Orquestar el flujo Extracción → Validación → Escritura en Airflow, reutili
 - `configs/schema.sql`: DDL opcional (referencia alternativa)
 
 ### Levantar Airflow
-1) Construir e iniciar servicios
+
+**En Linux/macOS:**
 ```bash
 make start
-# Equivalente manual:
-# docker-compose down --volumes
-# sudo chown -R $(id -u):$(id -g) logs dags plugins || true
-# rm -rf logs/* dags/* plugins/* && mkdir -p logs dags plugins && chmod 777 logs dags plugins
-# docker-compose run --rm webserver airflow db init | cat
-# docker-compose run --rm webserver airflow users create \
-#   --username admin --password admin --firstname Admin --lastname User \
-#   --role Admin --email admin@example.com | cat
-# docker-compose up -d
 ```
 
-2) Acceso a la UI de Airflow
+**En Windows (usando WSL):**
+1. Abrir WSL (Windows Subsystem for Linux)
+2. Navegar al directorio del proyecto
+3. Ejecutar:
+```bash
+make start
+```
+
+**El comando automáticamente:**
+- Limpia el entorno anterior
+- Inicializa la base de datos de Airflow
+- Crea el usuario admin
+- Levanta todos los servicios
+- **Crea las tablas necesarias** (`regulations` y `regulations_component`)
+
+**Acceso a la UI de Airflow:**
 - URL: `http://localhost:8080`
 - Usuario/clave: `admin` / `admin`
 
@@ -53,5 +60,5 @@ make start
 ### Troubleshooting
 - Si no se encuentra `PyYAML`, reconstruye la imagen: `docker-compose build --no-cache` y `docker-compose up -d`.
 - Permisos en volúmenes: usar `AIRFLOW_UID` y `AIRFLOW_GID` en `.env` (ver `.env.example`).
-
-
+- Si las tablas no existen: `make create-tables`
+- **Para Windows**: Usar WSL (Windows Subsystem for Linux) para ejecutar comandos `make`

@@ -32,7 +32,8 @@ with DAG(
     def extract_callable(ti, num_pages_to_scrape: int, verbose: bool):
         print("\n=== ETAPA: EXTRACCIÓN ===")
         print(f"Parámetros → num_pages_to_scrape={num_pages_to_scrape}, verbose={verbose}")
-        df = run_extraction(num_pages=num_pages_to_scrape, verbose=verbose)
+        num_pages_int = int(num_pages_to_scrape)
+        df = run_extraction(num_pages=num_pages_int, verbose=verbose)
         print(f"Total de registros extraídos: {len(df)}")
         print("=== FIN EXTRACCIÓN ===\n")
         return df.to_dict(orient='records')
