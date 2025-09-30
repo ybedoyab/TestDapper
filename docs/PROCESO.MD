@@ -175,3 +175,5 @@ CREATE TABLE IF NOT EXISTS regulations_component (
    - Cambiar el nombre de la carpeta `configs/` a `config/`
 
  - Paso 17: fix: variables de entorno centralizadas
+
+ - Paso 18: fix: MakeFile and docker-compose configurado para seguir un flujo
