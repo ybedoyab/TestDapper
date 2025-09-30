@@ -166,7 +166,7 @@ CREATE TABLE IF NOT EXISTS regulations_component (
      - Calidad: manejo simple de errores; logs útiles.
      - Idempotencia: no duplica registros.
 
- - Paso 15 — chore: limpieza final del repositorio (legacy y dependencias)
+ - Paso 15 — chore: limpieza del repositorio (legacy y dependencias)
    - Retirar `lambda.py` o renombrarlo a `lambda_legacy.py` si ya no es requerido.
    - Eliminar importaciones/paquetes no usados (p. ej., `boto3`, `botocore`) de código y `requirements.txt`.
    - Revisar `README.md` para reflejar el flujo final con Airflow.
