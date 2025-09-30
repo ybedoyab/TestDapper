@@ -10,11 +10,11 @@ Orquestar el flujo Extracción → Validación → Escritura en Airflow, reutili
 ### Estructura
 - `dags/ani_normas_dag.py`: DAG con 3 tareas (extract → validate → write)
 - `src/extraccion.py`: scraping (sin cambiar reglas de omisión actuales)
-- `src/validacion.py`: validación por tipos/regex desde `configs/validation_rules.yaml`
+- `src/validacion.py`: validación por tipos/regex desde `config/validation_rules.yaml`
 - `src/escritura.py`: inserción con idempotencia en Postgres
 - `src/db.py`: utilidades DB (parse URI y DDL si se requiere)
-- `configs/validation_rules.yaml`: reglas de validación configurables
-- `configs/schema.sql`: DDL opcional (referencia alternativa)
+- `config/validation_rules.yaml`: reglas de validación configurables
+- `config/schema.sql`: DDL opcional (referencia alternativa)
 
 ### Levantar Airflow
 
@@ -44,7 +44,7 @@ make start
 
 ### Configuración
 - BD de destino: la misma Postgres del compose (`postgres`), derivada de `AIRFLOW__CORE__SQL_ALCHEMY_CONN`.
-- Reglas de validación: `configs/validation_rules.yaml`.
+- Reglas de validación: `config/validation_rules.yaml`.
 - Parámetros del DAG:
   - `num_pages_to_scrape` (default: 3)
   - `verbose` (default: false)

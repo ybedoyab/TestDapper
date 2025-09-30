@@ -70,7 +70,7 @@ def _apply_regex(value: Any, pattern: str) -> bool:
         return False
 
 
-def run_validation(df: pd.DataFrame, rules_path: str = 'configs/validation_rules.yaml') -> Tuple[pd.DataFrame, Dict[str, Any]]:
+def run_validation(df: pd.DataFrame, rules_path: str = 'config/validation_rules.yaml') -> Tuple[pd.DataFrame, Dict[str, Any]]:
     rules = _load_rules(rules_path)
     if df is None or df.empty:
         metrics = {

@@ -1,13 +1,13 @@
 ### Plan de implementación por commits
 
- - Paso 1 — chore: init repo estructura airflow y carpetas base (dags, src, configs, logs, plugins)
+ - Paso 1 — chore: init repo estructura airflow y carpetas base (dags, src, config, logs, plugins)
    - Crear carpetas base del proyecto:
      - `dags/`: almacenará el DAG de Airflow.
      - `src/`: contendrá módulos `extraccion.py`, `validacion.py`, `escritura.py`, `db.py`.
-     - `configs/`: reglas de validación (`validation_rules.yaml`) y DDL opcional (`schema.sql`).
+     - `config/`: reglas de validación (`validation_rules.yaml`) y DDL opcional (`schema.sql`).
      - `logs/` y `plugins/`: usados por Airflow.
    - Verificar que en `docker-compose.yml`:
-     - Se montan los volúmenes `./dags`, `./src`, `./configs`, `./logs`, `./plugins`.
+     - Se montan los volúmenes `./dags`, `./src`, `./config`, `./logs`, `./plugins`.
      - `PYTHONPATH` incluye `/opt/airflow/src` para importar módulos desde el DAG.
    - No mover ni modificar lógica aún; solo la estructura para el refactor posterior.
 
@@ -44,7 +44,7 @@
    - Funciones propuestas:
      - `parse_sqlalchemy_uri(uri: str) -> Dict[str, Any]`.
      - `create_tables_if_not_exists(conn)` que ejecute DDL para las tablas destino.
-   - DDL sugerido (si se usa creación en código o `configs/schema.sql`):
+   - DDL sugerido (si se usa creación en código o `config/schema.sql`):
      - Tabla `regulations`:
        - `id SERIAL PRIMARY KEY`
        - `created_at TIMESTAMP NULL`, `update_at TIMESTAMP NULL`, `is_active BOOLEAN`
@@ -54,7 +54,7 @@
        - `id SERIAL PRIMARY KEY`, `regulations_id INTEGER REFERENCES regulations(id)`, `components_id INTEGER`
    - No agregar `UNIQUE` que altere comportamiento; la idempotencia se respeta en la app.
 
- - Paso 7 — feat: agregar configs/validation_rules.yaml con tipos/regex/obligatoriedad
+ - Paso 7 — feat: agregar config/validation_rules.yaml con tipos/regex/obligatoriedad
    - Estructura por campo con `type`, `required`, `regex` (opcional), `coerce` (opcional):
 ```yaml
 title:
@@ -104,7 +104,7 @@ update_at:
  - Paso 9 — feat: DAG Airflow ani_normas con tareas Extracción → Validación → Escritura
    - Archivo: `dags/ani_normas_dag.py` con tres `PythonOperator` en secuencia:
      - `extract_task`: ejecuta `run_extraction(num_pages)`; publica resultado (usar XCom con DF→JSON o parquet temporal en `/opt/airflow/logs/tmp/`).
-     - `validate_task`: carga reglas de `configs/validation_rules.yaml`, ejecuta `run_validation`, publica `df_validado` y métricas.
+     - `validate_task`: carga reglas de `config/validation_rules.yaml`, ejecuta `run_validation`, publica `df_validado` y métricas.
      - `write_task`: ejecuta `run_write(df_validado)`.
    - Configuración inicial del DAG:
      - `schedule_interval=None` (ejecución manual) y `catchup=False`.
@@ -121,10 +121,10 @@ update_at:
  - Paso 11 — docs: agregar README con pasos para levantar entorno y ejecutar el DAG
    - Índice breve: requisitos, levantar entorno, credenciales, ejecución del DAG, troubleshooting.
    - Comandos principales (vía Makefile): `make start`, abrir UI en `http://localhost:8080` (admin/admin).
-   - Mencionar dónde editar `configs/validation_rules.yaml` y cómo cambiar `num_pages_to_scrape`.
+   - Mencionar dónde editar `config/validation_rules.yaml` y cómo cambiar `num_pages_to_scrape`.
    - Indicar que el destino de escritura es la BD Postgres del compose.
 
- - Paso 12 — chore: agregar configs/schema.sql (DDL exportado/alternativo a creación en código)
+ - Paso 12 — chore: agregar config/schema.sql (DDL exportado/alternativo a creación en código)
    - Incluir DDL equivalente al creado por `create_tables_if_not_exists` para referencia:
 ```sql
 CREATE TABLE IF NOT EXISTS regulations (
@@ -167,6 +167,9 @@ CREATE TABLE IF NOT EXISTS regulations_component (
      - Idempotencia: no duplica registros.
 
  - Paso 15 — chore: limpieza del repositorio (legacy y dependencias)
-   - Retirar `lambda.py` o renombrarlo a `lambda_legacy.py` si ya no es requerido.
+   - Mover `lambda.py` a la carpeta `legacy/`.
    - Eliminar importaciones/paquetes no usados (p. ej., `boto3`, `botocore`) de código y `requirements.txt`.
    - Revisar `README.md` para reflejar el flujo final con Airflow.
+
+ - Paso 16 - fix: cambio de nombre de configs a config para estandarizacion
+   - Cambiar el nombre de la carpeta `configs/` a `config/`

@@ -19,7 +19,7 @@ init-airflow:
 
 create-tables:
 	@echo "Creating database tables..."
-	docker-compose exec -T postgres psql -U airflow -d airflow < configs/schema.sql
+	docker-compose exec -T postgres psql -U airflow -d airflow < config/schema.sql
 	@echo "Tables created successfully!"
 
 up-airflow:
