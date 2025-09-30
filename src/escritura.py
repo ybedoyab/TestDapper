@@ -172,6 +172,20 @@ def insert_new_records(db_manager: DatabaseManager, df: pd.DataFrame, entity: st
                 new_records = new_records.drop(columns=[col])
 
         print(f"Registros finales a insertar: {len(new_records)}")
+        
+        # Mostrar ejemplos de los datos que se van a insertar
+        print("=== EJEMPLOS DE DATOS A INSERTAR ===")
+        sample_records = new_records.head(10)
+        for idx, row in sample_records.iterrows():
+            print(f"  {idx + 1}. Título: {row['title'][:60]}...")
+            print(f"     Fecha: {row['created_at']}")
+            print(f"     Tipo: {row['gtype']}")
+            print(f"     Enlace: {row['external_link'][:50]}...")
+            print(f"     Resumen: {row['summary'][:80]}..." if pd.notna(row['summary']) else "     Resumen: [Sin resumen]")
+            print()
+        if len(new_records) > 10:
+            print(f"  ... y {len(new_records) - 10} registros más")
+        print("=" * 50)
 
         try:
             print(f"=== INSERTANDO {len(new_records)} REGISTROS ===")
@@ -179,6 +193,19 @@ def insert_new_records(db_manager: DatabaseManager, df: pd.DataFrame, entity: st
             if total_rows_processed == 0:
                 return 0, f"No records were actually inserted for entity {entity}"
             print(f"Registros insertados exitosamente: {total_rows_processed}")
+            
+            # Mostrar resumen de los datos insertados
+            print("=== RESUMEN DE DATOS INSERTADOS ===")
+            print(f"Total insertados: {total_rows_processed}")
+            print("Tipos de documentos encontrados:")
+            type_counts = new_records['gtype'].value_counts()
+            for gtype, count in type_counts.items():
+                print(f"  - {gtype}: {count}")
+            print("Fechas de creación:")
+            date_counts = new_records['created_at'].value_counts().head(5)
+            for date, count in date_counts.items():
+                print(f"  - {date}: {count}")
+            print("=" * 50)
         except Exception as insert_error:
             print(f"Error en inserción: {insert_error}")
             if "duplicate" in str(insert_error).lower() or "unique" in str(insert_error).lower():

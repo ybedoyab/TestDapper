@@ -1,4 +1,4 @@
-.PHONY: reset-airflow init-airflow up-airflow down-airflow start create-tables install-deps load-env
+.PHONY: reset-airflow init-airflow up-airflow down-airflow start create-tables install-deps load-env view-data view-regulations view-components db-connect
 
 load-env:
 	@echo "Loading environment variables..."
@@ -63,3 +63,26 @@ start: install-deps reset-airflow init-airflow up-airflow create-tables
 	@echo "Access UI at: http://localhost:8080"
 	@sed -i 's/\r$$//' .env 2>/dev/null || true
 	@export $$(cat .env | xargs) && echo "Login: $$AIRFLOW_ADMIN_USERNAME / $$AIRFLOW_ADMIN_PASSWORD"
+
+db-connect:
+	@echo "Connecting to PostgreSQL database..."
+	docker-compose exec postgres psql -U airflow -d airflow
+
+view-data:
+	@echo "=== RESUMEN DE DATOS EN LA BASE DE DATOS ==="
+	@echo "Total de regulaciones:"
+	docker-compose exec -T postgres psql -U airflow -d airflow -c "SELECT COUNT(*) as total_regulations FROM regulations;"
+	@echo ""
+	@echo "Total de componentes:"
+	docker-compose exec -T postgres psql -U airflow -d airflow -c "SELECT COUNT(*) as total_components FROM regulations_component;"
+	@echo ""
+	@echo "Regulaciones por entidad:"
+	docker-compose exec -T postgres psql -U airflow -d airflow -c "SELECT entity, COUNT(*) as count FROM regulations GROUP BY entity ORDER BY count DESC;"
+
+view-regulations:
+	@echo "=== ÚLTIMAS 10 REGULACIONES ==="
+	docker-compose exec -T postgres psql -U airflow -d airflow -c "SELECT id, title, entity, gtype, created_at FROM regulations ORDER BY created_at DESC LIMIT 10;"
+
+view-components:
+	@echo "=== COMPONENTES DE REGULACIONES ==="
+	docker-compose exec -T postgres psql -U airflow -d airflow -c "SELECT rc.id, r.title, r.entity, rc.components_id FROM regulations_component rc JOIN regulations r ON rc.regulations_id = r.id ORDER BY rc.id DESC LIMIT 10;"

@@ -179,3 +179,5 @@ CREATE TABLE IF NOT EXISTS regulations_component (
  - Paso 18: fix: MakeFile and docker-compose configurado para seguir un flujo
 
  - Paso 19: fix: error de dependencia y cli
+
+ - Paso 20: fix: pythonpath env error
